@@ -15,4 +15,9 @@ Certifique-se de ter o SDK do .NET 8.0 instalado. Você pode baixá-lo em [dotne
     
 ## Resposta
 
-A aplicação executará no seu console
+A aplicação executará no seu console, e pedirá:
+```bash
+    Empregos.com
+    O que esta procurando?
+```
+Assim, você passa qual vaga deseja, e ao enviar, o script irá rodar, assim ele criará um txt com o nome que vc pesquisou, e anotara todos os resultados encontratos no arquivo

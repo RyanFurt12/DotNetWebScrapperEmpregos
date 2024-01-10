@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.IO;
+using System.Reflection;
 using DotNetWebScrapperEmpregos.models;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -7,9 +8,19 @@ class Program
 {
     static void Main()
     {
+
+        Console.Write("\nEmpregos.com\nO que esta procurando? ");
+        string searchInput = Console.ReadLine() ?? "";
+        searchInput = searchInput.Replace(" ", "-").Replace(".", "-").Replace("#", "").Replace("+", "");
+        searchInput = searchInput.ToLower();
+
+        string txtPath = @$"data/{searchInput}.txt";
+        if (File.Exists(txtPath)) File.Delete(txtPath);
+        StreamWriter sw = new StreamWriter(txtPath);
+
         IWebDriver driver = new ChromeDriver();
         Console.Clear();
-        driver.Navigate().GoToUrl("https://www.empregos.com.br/vagas/desenvolvedor-net/");
+        driver.Navigate().GoToUrl($"https://www.empregos.com.br/vagas/{searchInput}/");
         
         string numberOfPagesText = driver.FindElement(By.XPath("//*[@id='ctl00_ContentBody_pPaiResultadoTopo']/strong[2]")).Text;
         int numberOfPages = int.Parse(numberOfPagesText.Split(" ")[2]);
@@ -40,12 +51,14 @@ class Program
                     }
 
                     // Print the extracted information
-                    Console.WriteLine($"- Title: {vaga.Title}");
-                    Console.WriteLine($"- Description: {vaga.Description}");
-                    Console.WriteLine($"- Link: {vaga.Link}");
-                    Console.WriteLine(new string('-', 30));
+                    sw.WriteLine($"- Title: {vaga.Title}");
+                    sw.WriteLine($"- Description: {vaga.Description}");
+                    sw.WriteLine($"- Link: {vaga.Link}");
+                    sw.WriteLine(new string('-', 30));
                 }
             }
+            catch (NoSuchElementException){}
+            catch (StaleElementReferenceException){}
             
             finally
             {
